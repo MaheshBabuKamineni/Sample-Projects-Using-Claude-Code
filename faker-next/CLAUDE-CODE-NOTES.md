@@ -40,6 +40,10 @@ pnpm run test    # run the unit tests
 
 ## Sample output
 
+![Terminal window showing Faker's generated users, products, other values and German and Japanese samples](screenshots/sample-output.png)
+
+The same output as text, with the script that produced it:
+
 This script was run against the source in this folder with `npx tsx`, using a fixed seed so the results are reproducible:
 
 ```ts
