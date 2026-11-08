@@ -7,3 +7,4 @@ A collection of small projects generated with [Claude Code](https://claude.com/c
 | Project | Description | Stack |
 | --- | --- | --- |
 | [Future Me](future-me/) | Write letters to your future self that stay sealed, with a live countdown, until the date you choose. | HTML, CSS, vanilla JavaScript |
+| [Color Palette Explorer](color-palette-explorer/) | Browse, search and copy 20 handpicked colors, with dark mode and a Recently Viewed history saved by the server. | Node.js, Express, HTML, CSS, JavaScript |
