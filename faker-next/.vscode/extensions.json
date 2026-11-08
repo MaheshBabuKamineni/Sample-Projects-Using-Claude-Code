@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "github.vscode-pull-request-github",
+    "oxc.oxc-vscode",
+    "redhat.vscode-yaml"
+  ]
+}

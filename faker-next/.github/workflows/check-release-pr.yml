@@ -1,0 +1,68 @@
+name: Check Release PR
+
+on:
+  pull_request:
+    paths:
+      - 'CHANGELOG.md'
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  check_release_pr:
+    name: Check Release PR
+    if: startsWith(github.head_ref, 'chore/release/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout faker
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: faker
+
+      - name: Checkout playground
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: faker-js/playground
+          path: playground
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          package_json_file: faker/package.json
+
+      - name: Set node version to 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.20.0
+          cache: 'pnpm'
+          cache-dependency-path: |
+            faker/pnpm-lock.yaml
+            playground/pnpm-lock.yaml
+
+      - name: Install deps - faker
+        run: |
+          cd faker
+          pnpm install
+
+      - name: Build - faker
+        run: |
+          cd faker
+          pnpm run build
+
+      - name: Install deps - playground
+        run: |
+          cd playground
+          sed -i 's/overrides-for-release/overrides/' package.json
+          pnpm install --no-frozen-lockfile
+
+      - name: Build - playground
+        run: |
+          cd playground
+          pnpm run build
+
+      - name: Test - playground
+        run: |
+          cd playground
+          pnpm run test
