@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Future Me</title>
+  <meta name="description" content="Write a letter to your future self and seal it until the day you choose." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Apply the saved theme before first paint to avoid a light/dark flash -->
+  <script>
+    (function () {
+      var theme;
+      try { theme = localStorage.getItem('futureMe.theme'); } catch (e) {}
+      if (theme !== 'light' && theme !== 'dark') {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+</head>
+<body>
+  <div class="bg-orbs" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <header class="topbar container">
+    <a class="brand" href="#" aria-label="Future Me">
+      <span class="brand-mark" aria-hidden="true">✦</span>
+      Future&nbsp;Me
+    </a>
+    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.5" />
+        <path d="M12 2v2.5M12 19.5V22M4.2 4.2 6 6M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8" />
+      </svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7Z" />
+      </svg>
+    </button>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <p class="eyebrow">A time capsule for one</p>
+      <h1>Write to the person<br />you're <em>becoming</em>.</h1>
+      <p class="lede">Seal a message today. It stays locked, with no peeking, until the moment you choose.</p>
+    </section>
+
+    <figure id="quoteCard" class="quote-card">
+      <blockquote id="quoteText"></blockquote>
+      <figcaption id="quoteAuthor"></figcaption>
+      <button id="newQuote" class="icon-btn" type="button" aria-label="Show another quote">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v3.5h3.5M4 13a8 8 0 0 0 14.6 4.5M20 20v-3.5h-3.5" />
+        </svg>
+      </button>
+    </figure>
+
+    <div class="layout">
+      <section class="card compose" aria-labelledby="composeTitle">
+        <h2 id="composeTitle">New letter</h2>
+
+        <form id="letterForm" novalidate>
+          <div class="field">
+            <label for="name">Your name</label>
+            <input id="name" name="name" type="text" maxlength="40" autocomplete="given-name" placeholder="e.g. Sam" required />
+          </div>
+
+          <div class="field">
+            <div class="label-row">
+              <label for="message">Message to future you</label>
+              <span id="charCount" class="char-count">0 / 2000</span>
+            </div>
+            <textarea id="message" name="message" maxlength="2000" rows="7" placeholder="Dear future me…" required></textarea>
+          </div>
+
+          <div class="field">
+            <label for="unlockAt">Unlock on</label>
+            <input id="unlockAt" name="unlockAt" type="datetime-local" step="1" required />
+            <div class="presets" role="group" aria-label="Quick dates">
+              <button type="button" class="chip" data-preset="minute">1 min <small>demo</small></button>
+              <button type="button" class="chip" data-preset="week">1 week</button>
+              <button type="button" class="chip" data-preset="month">1 month</button>
+              <button type="button" class="chip" data-preset="year">1 year</button>
+              <button type="button" class="chip" data-preset="fiveYears">5 years</button>
+            </div>
+          </div>
+
+          <p id="formError" class="form-error" role="alert"></p>
+
+          <button id="submitBtn" type="submit" class="btn-primary">
+            <span class="btn-label">Seal the letter</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3.5 6.5h17v11a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5Z" />
+              <path d="m3.5 6.5 8.5 7 8.5-7" />
+            </svg>
+          </button>
+        </form>
+      </section>
+
+      <section class="dashboard" aria-labelledby="dashTitle">
+        <div class="dash-head">
+          <h2 id="dashTitle">Your time capsule</h2>
+          <div class="filters" role="group" aria-label="Filter letters">
+            <button type="button" class="filter" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" class="filter" data-filter="sealed" aria-pressed="false">Sealed</button>
+            <button type="button" class="filter" data-filter="opened" aria-pressed="false">Opened</button>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><span id="statTotal">0</span><small>Letters</small></div>
+          <div class="stat"><span id="statSealed">0</span><small>Sealed</small></div>
+          <div class="stat"><span id="statOpened">0</span><small>Opened</small></div>
+          <div class="stat"><span id="statNext">—</span><small>Next unlock</small></div>
+        </div>
+
+        <div id="letters" class="letters"></div>
+
+        <div id="emptyState" class="empty" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3.5 6.5h17v11a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5Z" />
+            <path d="m3.5 6.5 8.5 7 8.5-7" />
+          </svg>
+          <p id="emptyText"></p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer container">
+    Letters are saved only in this browser, on this device.
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <template id="letterTemplate">
+    <article class="letter is-locked">
+      <div class="letter-top">
+        <div class="seal" aria-hidden="true">
+          <svg class="icon-lock" viewBox="0 0 24 24">
+            <rect x="5" y="10.5" width="14" height="10" rx="2.5" />
+            <path d="M8.5 10.5v-3a3.5 3.5 0 0 1 7 0v3" />
+          </svg>
+          <svg class="icon-open" viewBox="0 0 24 24">
+            <path d="M3.5 10 12 4.5 20.5 10v9a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19Z" />
+            <path d="m3.5 10 8.5 6 8.5-6" />
+          </svg>
+        </div>
+        <div class="letter-meta">
+          <h3 class="letter-from"></h3>
+          <p class="letter-status"></p>
+        </div>
+        <button type="button" class="icon-btn delete" aria-label="Delete letter">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l.8 12a1.5 1.5 0 0 0 1.5 1.5h6.4a1.5 1.5 0 0 0 1.5-1.5l.8-12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="locked-view">
+        <div class="collapse-inner">
+          <div class="countdown">
+            <div class="unit"><span data-unit="d">00</span><small>days</small></div>
+            <div class="unit"><span data-unit="h">00</span><small>hours</small></div>
+            <div class="unit"><span data-unit="m">00</span><small>mins</small></div>
+            <div class="unit"><span data-unit="s">00</span><small>secs</small></div>
+          </div>
+          <div class="progress" role="progressbar" aria-label="Time until unlock" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="progress-fill"></div>
+          </div>
+          <p class="progress-label">
+            <span class="progress-pct"></span>
+            <span class="progress-written"></span>
+          </p>
+        </div>
+      </div>
+
+      <div class="open-view">
+        <div class="collapse-inner">
+          <div class="letter-paper">
+            <p class="letter-body"></p>
+            <p class="letter-sign"></p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
